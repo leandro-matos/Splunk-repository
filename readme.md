@@ -13,16 +13,16 @@ Link de Acesso:
 
 Para a correta indexação dos logs no Splunk não foi possível utilizar o sourcetype default, dessa forma foi necessário ajustes para a indexação correta:
 
-* Definido o formato do TimeStamp (%Y/%m/%d  %H.%.M:%.S.%3N);
+* Definido o formato do TimeStamp `(%Y/%m/%d  %H.%.M:%.S.%3N)`;
 * Definido o o prefixo do timestamp, no caso o valor de _time;
-* Também foi necessário alterar o formato de indexação do Valor e Frete que estavam com "," para separação de moeda, fiz a conversão com ".";
+* Também foi necessário alterar o formato de indexação do Valor e Frete que estavam com `,` para separação de moeda, fiz a conversão com `.`;
 * Após esse ajuste antes da indexação, facilitou para que pudesse ser feito a soma e média dos valores;
 
 Um detalhe importante, houve um problema identificado ao utilizar o iplocation, nem todos os IP's trouxeram as informações de Region e City, cerca de 02 mil resultados estavam em branco.
 Foi necessário efetuar a seguinte correção:
 
 * Dentro do path `$SPLUNK_HOME/share/` foi substítuido o arquivo `GeoLite2-City.mmdb` por um novo de outro site `https://db-ip.com/`
-* Para esse caso segui as documentações da própria Splunk: https://docs.splunk.com/Documentation/Splunk/8.1.2/SearchReference/Iplocation
+* Documentação: `https://docs.splunk.com/Documentation/Splunk/8.1.2/SearchReference/Iplocation`
 * Após a importação e restart foi possível a utilização do iplocation com todos os resultados possíveis de forma assertiva, onde 100% dos IP's trouxeram resultados;
 
 
