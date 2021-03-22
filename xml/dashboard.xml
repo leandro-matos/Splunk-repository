@@ -14,7 +14,7 @@
     <sampleRatio>1</sampleRatio>
   </search>
   <search id="search_base_top">
-    <query>index="realprotect" Categoria=* OR Produto=* OR ResultVenda="Abandonado" OR IP=* | table Categoria, Produto, ResultVenda, IP</query>
+    <query>index="realprotect" Categoria=* OR Produto=* OR ResultVenda="Abandonado" OR IP=* | table Categoria, Produto, ResultVenda, IP, Frete, Valor</query>
     <earliest>$tempo.earliest$</earliest>
     <latest>$tempo.latest$</latest>
     <sampleRatio>1</sampleRatio>
@@ -505,8 +505,23 @@
     </panel>
   </row>
   <row>
-    <panel>
-      <title>Quantidade de clientes (IPs) Únicos</title>
+    <panel depends="$alwaysHideCSS$">
+      <html>
+      <style>
+        #SinglePainel{
+          width:20% !important;
+        }
+        #ValuePanel{
+          width:40% !important;
+        }
+        #FretePanel{
+          width:40% !important;
+        }
+     </style>
+    </html>
+    </panel>
+    <panel id="SinglePainel">
+      <title>Qtde de clientes (IPs) Únicos</title>
       <single>
         <search base="search_base_value">
           <query>| search Categoria=$listaCategoria$ | stats dc(IP) as NumberIP</query>
@@ -514,6 +529,7 @@
         <option name="colorBy">trend</option>
         <option name="colorMode">block</option>
         <option name="drilldown">all</option>
+        <option name="height">129</option>
         <option name="numberPrecision">0</option>
         <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
         <option name="rangeValues">[0,30,70,100]</option>
@@ -533,22 +549,19 @@
         </drilldown>
       </single>
     </panel>
-    <panel>
-      <title>Informações sobre os Fretes dos Produtos</title>
+    <panel id="ValuePanel">
+      <title>Valores dos Fretes dos Produtos</title>
       <html>
       <style>
-        #centralize .facets-container{
+        #centralizeFrete .facets-container{
         display: flex !important;
         justify-content: center !important;
         }
       </style>
     </html>
-      <single id="centralize">
-        <search>
-          <query>index="realprotect" Categoria=$listaCategoria$ | stats sum(Frete) as "Soma", avg(Frete) as "Média" min(Frete) as "Menor Valor", max(Frete) as "Maior Valor"</query>
-          <earliest>$tempo.earliest$</earliest>
-          <latest>$tempo.latest$</latest>
-          <sampleRatio>1</sampleRatio>
+      <single id="centralizeFrete">
+        <search base="search_base_top">
+          <query>| search Categoria=$listaCategoria$ | stats avg(Frete) as "Média" min(Frete) as "Menor Valor", max(Frete) as "Maior Valor"</query>
         </search>
         <option name="colorBy">value</option>
         <option name="colorMode">none</option>
@@ -570,17 +583,45 @@
         <option name="useThousandSeparators">1</option>
       </single>
     </panel>
+    <panel id="FretePanel">
+      <title>Valores dos Produtos (Vendas Bem Sucedidas e Mal Sucedidas)</title>
+      <html>
+      <style>
+        #centralizeValor .facets-container{
+        display: flex !important;
+        justify-content: center !important;
+        }
+      </style>
+    </html>
+      <single id="centralizeValor">
+        <search base="search_base_top">
+          <query>| search Categoria=$listaCategoria$ | stats avg(Valor) as "Média" min(Valor) as "Menor Valor", max(Valor) as "Maior Valor"</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="height">123</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">1</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trellis.splitBy">_aggregation</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+    </panel>
   </row>
   <row>
     <panel id="StateMap">
       <title>Mapa com categorias por região</title>
-      <input type="time" token="time" searchWhenChanged="true">
-        <label>Selecione o range de tempo</label>
-        <default>
-          <earliest>0</earliest>
-          <latest></latest>
-        </default>
-      </input>
       <map>
         <search>
           <query>index=realprotect Categoria=$listaCategoria$ | iplocation IP | geostats latfield=lat longfield=lon count by Region</query>
@@ -616,8 +657,8 @@
          clientlat &lt;= $map.click.north$
          clientlon &gt;= $map.click.west$
          clientlon &lt;= $map.click.east$</query>
-          <earliest>0</earliest>
-          <latest></latest>
+          <earliest>$tempo.earliest$</earliest>
+          <latest>$tempo.latest$</latest>
         </search>
         <option name="count">10</option>
         <option name="drilldown">none</option>
