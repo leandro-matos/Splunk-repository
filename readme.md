@@ -7,6 +7,7 @@
 
 Link de Acesso:
 * https://52.87.173.142:8000 ou https://ec2-52-87-173-142.compute-1.amazonaws.com:8000
+* Foi apenas habilitado o SSL na instância, não foi gerado o certificado digital;
 * Usuário e Senha: realprotect
 * Index: realprotect
 * Sourcetype: ecommerce_app
@@ -21,7 +22,8 @@ Para a correta indexação dos logs no Splunk não foi possível utilizar o sour
 Um detalhe importante, houve um problema identificado ao utilizar o iplocation, nem todos os IP's trouxeram as informações de Region e City, cerca de 02 mil resultados estavam em branco.
 Foi necessário efetuar a seguinte correção:
 
-* Dentro do path `$SPLUNK_HOME/share/` foi substítuido o arquivo `GeoLite2-City.mmdb` por um novo de outro site `https://db-ip.com/`
+* Dentro do path `$SPLUNK_HOME/share/` foi substítuido o arquivo `GeoLite2-City.mmdb`
+* Localizado um arquivo completo dentro do site: `https://db-ip.com/`
 * Documentação: `https://docs.splunk.com/Documentation/Splunk/8.1.2/SearchReference/Iplocation`
 * Após a importação e restart foi possível a utilização do iplocation com todos os resultados possíveis de forma assertiva, onde 100% dos IP's trouxeram resultados;
 
