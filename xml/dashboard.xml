@@ -1,0 +1,628 @@
+<form theme="dark">
+  <label>Real Protect</label>
+  <search id="search_base_qtde">
+    <query>index="realprotect" ResultVenda=* OR ResultCompra=* OR NomeBandeira=* OR ResultCampanha=* OR NomeTransportadora=* OR Categoria=*
+    | stats count by ResultVenda, NomeBandeira, ResultCompra, ResultCampanha, NomeTransportadora, Categoria</query>
+    <earliest>$tempo.earliest$</earliest>
+    <latest>$tempo.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <search id="search_base_value">
+    <query>index="realprotect" ResultVenda="Bem Sucedido" OR NomeBandeira="Visa" OR NomeBandeira="Master" | addtotals Valor </query>
+    <earliest>$tempo.earliest$</earliest>
+    <latest>$tempo.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <search id="search_base_top">
+    <query>index="realprotect" Categoria=* OR Produto=* OR ResultVenda="Abandonado" OR IP=* | table Categoria, Produto, ResultVenda, IP</query>
+    <earliest>$tempo.earliest$</earliest>
+    <latest>$tempo.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <fieldset submitButton="false">
+    <input type="time" token="tempo" searchWhenChanged="true">
+      <label>Intervalo de Tempo</label>
+      <default>
+        <earliest></earliest>
+        <latest></latest>
+      </default>
+    </input>
+    <input type="dropdown" token="listaCategoria">
+      <label>Selecione a Categoria:</label>
+      <choice value="*">Todos</choice>
+      <fieldForLabel>Categoria</fieldForLabel>
+      <fieldForValue>Categoria</fieldForValue>
+      <search>
+        <query>index=realprotect 
+| table Categoria 
+| dedup Categoria
+| sort Categoria</query>
+        <earliest>0</earliest>
+        <latest></latest>
+      </search>
+      <default>*</default>
+      <initialValue>*</initialValue>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Quantidade de Vendas Bem Sucedidas</title>
+      <single>
+        <title>Quantidade Geral</title>
+        <search base="search_base_qtde">
+          <query>search ResultVenda="Bem Sucedido" Categoria=$listaCategoria$ | stats sum(count) AS count</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x53a051","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">before</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20ResultVenda%3D*%20OR%20ResultCompra%3D*%20OR%20NomeBandeira%3D*%20OR%20ResultCampanha%3D*%20OR%20NomeTransportadora%3D*%20OR%20Categoria%3D*%0A%20%20%20%20%7C%20stats%20count%20by%20ResultVenda%2C%20NomeBandeira%2C%20ResultCompra%2C%20ResultCampanha%2C%20NomeTransportadora%2C%20Categoria%20%7C%20search%20ResultVenda%3D%22Bem%20Sucedido%22%20Categoria%3D$listaCategoria$%20%7C%20stats%20sum(count)%20AS%20count&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <title>Quantidade de Compras com Visa</title>
+      <single>
+        <title>Quantidade Visa</title>
+        <search base="search_base_qtde">
+          <query>search NomeBandeira="Visa" Categoria=$listaCategoria$ | stats sum(count) AS count</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x53a051","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20ResultVenda%3D*%20OR%20ResultCompra%3D*%20OR%20NomeBandeira%3D*%20OR%20ResultCampanha%3D*%20OR%20NomeTransportadora%3D*%20OR%20Categoria%3D*%0A%20%20%20%20%7C%20stats%20count%20by%20ResultVenda%2C%20NomeBandeira%2C%20ResultCompra%2C%20ResultCampanha%2C%20NomeTransportadora%2C%20Categoria%20%7C%20search%20NomeBandeira%3D%22Visa%22%20Categoria%3D$listaCategoria$%20%7C%20stats%20sum(count)%20AS%20count&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <title>Quantidade de Compras com MasterCard</title>
+      <single>
+        <title>Quantidade MasterCard</title>
+        <search base="search_base_qtde">
+          <query>search NomeBandeira="Master" Categoria=$listaCategoria$ | stats sum(count) AS count</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x53a051","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20ResultVenda%3D*%20OR%20ResultCompra%3D*%20OR%20NomeBandeira%3D*%20OR%20ResultCampanha%3D*%20OR%20NomeTransportadora%3D*%20OR%20Categoria%3D*%0A%20%20%20%20%7C%20stats%20count%20by%20ResultVenda%2C%20NomeBandeira%2C%20ResultCompra%2C%20ResultCampanha%2C%20NomeTransportadora%2C%20Categoria%20%7C%20search%20NomeBandeira%3D%22Master%22%20Categoria%3D$listaCategoria$%20%7C%20stats%20sum(count)%20AS%20count&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <title>Quantidade de Vendas Mal Sucedidas</title>
+      <single>
+        <title>Quantidade Sem êxito</title>
+        <search base="search_base_qtde">
+          <query>search ResultVenda="Abandonado" Categoria=$listaCategoria$ | stats sum(count) AS count</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xdc4e41"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">before</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20ResultVenda%3D*%20OR%20ResultCompra%3D*%20OR%20NomeBandeira%3D*%20OR%20ResultCampanha%3D*%20OR%20NomeTransportadora%3D*%20OR%20Categoria%3D*%0A%20%20%20%20%7C%20stats%20count%20by%20ResultVenda%2C%20NomeBandeira%2C%20ResultCompra%2C%20ResultCampanha%2C%20NomeTransportadora%2C%20Categoria%20%7C%20search%20ResultVenda%3D%22Abandonado%22%20Categoria%3D$listaCategoria$%20%7C%20stats%20sum(count)%20AS%20count&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Soma de Vendas Bem Sucedidas</title>
+      <single>
+        <title>Soma Geral</title>
+        <search base="search_base_value">
+          <query>| search ResultVenda="Bem Sucedido" Categoria=$listaCategoria$ | stats sum(Valor) as Value</query>
+        </search>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="unit">R$</option>
+        <option name="unitPosition">before</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20ResultVenda%3D%22Bem%20Sucedido%22%20OR%20NomeBandeira%3D%22Visa%22%20OR%20NomeBandeira%3D%22Master%22%20%7C%20addtotals%20Valor%20%7C%20search%20ResultVenda%3D%22Bem%20Sucedido%22%20Categoria%3D$listaCategoria$%20%7C%20stats%20sum(Valor)%20as%20Value&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <title>Soma de Vendas com Visa</title>
+      <single>
+        <title>Soma Visa</title>
+        <search base="search_base_value">
+          <query>| search NomeBandeira="Visa" Categoria=$listaCategoria$ | rex mode=sed field=Valor "s/,/./g" | stats sum(Valor) as Value</query>
+        </search>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="unit">R$</option>
+        <option name="unitPosition">before</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20ResultVenda%3D%22Bem%20Sucedido%22%20OR%20NomeBandeira%3D%22Visa%22%20OR%20NomeBandeira%3D%22Master%22%20%7C%20addtotals%20Valor%20%7C%20search%20NomeBandeira%3D%22Visa%22%20Categoria%3D$listaCategoria$%20%7C%20rex%20mode%3Dsed%20field%3DValor%20%22s%2F%2C%2F.%2Fg%22%20%7C%20stats%20sum(Valor)%20as%20Value&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <title>Soma de Vendas com MasterCard</title>
+      <single>
+        <title>Soma MasterCard</title>
+        <search base="search_base_value">
+          <query>| search NomeBandeira="Master" Categoria=$listaCategoria$ | rex mode=sed field=Valor "s/,/./g" | stats sum(Valor) as Value</query>
+        </search>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="unit">R$</option>
+        <option name="unitPosition">before</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20ResultVenda%3D%22Bem%20Sucedido%22%20OR%20NomeBandeira%3D%22Visa%22%20OR%20NomeBandeira%3D%22Master%22%20%7C%20addtotals%20Valor%20%7C%20search%20NomeBandeira%3D%22Master%22%20Categoria%3D$listaCategoria$%20%7C%20rex%20mode%3Dsed%20field%3DValor%20%22s%2F%2C%2F.%2Fg%22%20%7C%20stats%20sum(Valor)%20as%20Value&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <title>Média por Venda Bem Sucedida</title>
+      <single>
+        <title>Valor Médio por Produto</title>
+        <search base="search_base_value">
+          <query>| search ResultVenda="Bem Sucedido" Categoria=$listaCategoria$ | stats avg(Valor) as Value</query>
+        </search>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="unit">R$</option>
+        <option name="unitPosition">before</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20ResultVenda%3D%22Bem%20Sucedido%22%20OR%20NomeBandeira%3D%22Visa%22%20OR%20NomeBandeira%3D%22Master%22%20%7C%20addtotals%20Valor%20%7C%20search%20ResultVenda%3D%22Bem%20Sucedido%22%20Categoria%3D$listaCategoria$%20%7C%20stats%20avg(Valor)%20as%20Value&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Métodos de Compra</title>
+      <chart>
+        <search base="search_base_qtde">
+          <query>| search Categoria=$listaCategoria$ | stats sum(count) as value by ResultCompra | sort - value</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">all</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.02</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="charting.seriesColors">[#606ABE,#6EFAA3]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">small</option>
+        <option name="trellis.splitBy">ResultCompra</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20ResultVenda%3D*%20OR%20ResultCompra%3D*%20OR%20NomeBandeira%3D*%20OR%20ResultCampanha%3D*%20OR%20NomeTransportadora%3D*%20OR%20Categoria%3D*%0A%20%20%20%20%7C%20stats%20count%20by%20ResultVenda%2C%20NomeBandeira%2C%20ResultCompra%2C%20ResultCampanha%2C%20NomeTransportadora%2C%20Categoria%20%7C%20search%20Categoria%3D$listaCategoria$%20%7C%20stats%20sum(count)%20as%20value%20by%20ResultCompra%20%7C%20sort%20-%20value&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </chart>
+    </panel>
+    <panel>
+      <title>Compras por Bandeiras</title>
+      <chart>
+        <search base="search_base_qtde">
+          <query>| search Categoria=$listaCategoria$ | stats sum(count) as value by NomeBandeira | sort - value</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">all</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.fieldColors">{#66FF00,#FF0000,#00009C}</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="charting.seriesColors">[#8aa7bd,#6EFAA3]</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20ResultVenda%3D*%20OR%20ResultCompra%3D*%20OR%20NomeBandeira%3D*%20OR%20ResultCampanha%3D*%20OR%20NomeTransportadora%3D*%20OR%20Categoria%3D*%0A%20%20%20%20%7C%20stats%20count%20by%20ResultVenda%2C%20NomeBandeira%2C%20ResultCompra%2C%20ResultCampanha%2C%20NomeTransportadora%2C%20Categoria%20%7C%20search%20Categoria%3D$listaCategoria$%20%7C%20stats%20sum(count)%20as%20value%20by%20NomeBandeira%20%7C%20sort%20-%20value&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </chart>
+    </panel>
+    <panel>
+      <title>Principais Campanhas</title>
+      <chart>
+        <search base="search_base_qtde">
+          <query>| search Categoria=$listaCategoria$ | stats sum(count) as value by ResultCampanha | sort - value</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">all</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="charting.seriesColors">["0x53a051","0x53a051"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="charting.seriesColors">[#996a7a,#6EFAA3]</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20ResultVenda%3D*%20OR%20ResultCompra%3D*%20OR%20NomeBandeira%3D*%20OR%20ResultCampanha%3D*%20OR%20NomeTransportadora%3D*%20OR%20Categoria%3D*%0A%20%20%20%20%7C%20stats%20count%20by%20ResultVenda%2C%20NomeBandeira%2C%20ResultCompra%2C%20ResultCampanha%2C%20NomeTransportadora%2C%20Categoria%20%7C%20search%20Categoria%3D$listaCategoria$%20%7C%20stats%20sum(count)%20as%20value%20by%20ResultCampanha%20%7C%20sort%20-%20value&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Principais Transportadoras</title>
+      <chart>
+        <search base="search_base_qtde">
+          <query>| search Categoria=$listaCategoria$ | stats sum(count) as value by NomeTransportadora | sort - value</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">all</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="height">374</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20ResultVenda%3D*%20OR%20ResultCompra%3D*%20OR%20NomeBandeira%3D*%20OR%20ResultCampanha%3D*%20OR%20NomeTransportadora%3D*%20OR%20Categoria%3D*%0A%20%20%20%20%7C%20stats%20count%20by%20ResultVenda%2C%20NomeBandeira%2C%20ResultCompra%2C%20ResultCampanha%2C%20NomeTransportadora%2C%20Categoria%20%7C%20search%20Categoria%3D$listaCategoria$%20%7C%20stats%20sum(count)%20as%20value%20by%20NomeTransportadora%20%7C%20sort%20-%20value&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </chart>
+    </panel>
+    <panel>
+      <title>Categorias mais Populares</title>
+      <table>
+        <search base="search_base_top">
+          <query>search Categoria=$listaCategoria$ | top limit=100 Categoria | addcoltotals count, percent | fillnull value=TotalCategoria | rename count as Quantidade, percent as Porcentagem</query>
+        </search>
+        <option name="count">11</option>
+        <option name="drilldown">cell</option>
+        <option name="rowNumbers">true</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20Categoria%3D*%20OR%20Produto%3D*%20OR%20ResultVenda%3D%22Abandonado%22%20OR%20IP%3D*%20%7C%20table%20Categoria%2C%20Produto%2C%20ResultVenda%2C%20IP%20%7C%20search%20Categoria%3D$listaCategoria$%20%7C%20top%20limit%3D100%20Categoria%20%7C%20addcoltotals%20count%2C%20percent%20%7C%20fillnull%20value%3DTotalCategoria%20%7C%20rename%20count%20as%20Quantidade%2C%20percent%20as%20Porcentagem&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </table>
+    </panel>
+    <panel>
+      <title>Quantidade de clientes por IP</title>
+      <table>
+        <search base="search_base_top">
+          <query>| search Categoria=$listaCategoria$ | top limit=0 IP | rename count as Quantidade, percent as Porcentagem</query>
+        </search>
+        <option name="count">11</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">row</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">true</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20Categoria%3D*%20OR%20Produto%3D*%20OR%20ResultVenda%3D%22Abandonado%22%20OR%20IP%3D*%20%7C%20table%20Categoria%2C%20Produto%2C%20ResultVenda%2C%20IP%20%7C%20search%20Categoria%3D$listaCategoria$%20%7C%20top%20limit%3D0%20IP%20%7C%20rename%20count%20as%20Quantidade%2C%20percent%20as%20Porcentagem&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>TOP 15 Produtos mais Procurados</title>
+      <chart>
+        <search base="search_base_top">
+          <query>| search Categoria=$listaCategoria$ | top limit=15 Produto | rename count as Quantidade, percent as Porcentagem</query>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.chart.showLabels">1</option>
+        <option name="charting.chart.showPercent">0</option>
+        <option name="charting.drilldown">all</option>
+        <option name="height">295</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20Categoria%3D*%20OR%20Produto%3D*%20OR%20ResultVenda%3D%22Abandonado%22%20OR%20IP%3D*%20%7C%20table%20Categoria%2C%20Produto%2C%20ResultVenda%2C%20IP%20%7C%20search%20Categoria%3D$listaCategoria$%20%7C%20top%20limit%3D15%20Produto%20%7C%20rename%20count%20as%20Quantidade%2C%20percent%20as%20Porcentagem&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </chart>
+    </panel>
+    <panel>
+      <title>Top 10 Produtos abandonados no carrinho</title>
+      <table>
+        <search base="search_base_top">
+          <query>| search Categoria=$listaCategoria$ ResultVenda="Abandonado" | top limit=10 Produto | addcoltotals count, percent | fillnull value=TotalProdutos | rename count as Quantidade, percent as Porcentagem</query>
+        </search>
+        <option name="count">8</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">true</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">false</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20Categoria%3D*%20OR%20Produto%3D*%20OR%20ResultVenda%3D%22Abandonado%22%20OR%20IP%3D*%20%7C%20table%20Categoria%2C%20Produto%2C%20ResultVenda%2C%20IP%20%7C%20search%20Categoria%3D$listaCategoria$%20ResultVenda%3D%22Abandonado%22%20%7C%20top%20limit%3D10%20Produto%20%7C%20addcoltotals%20count%2C%20percent%20%7C%20fillnull%20value%3DTotalProdutos%20%7C%20rename%20count%20as%20Quantidade%2C%20percent%20as%20Porcentagem&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Quantidade de clientes (IPs) Únicos</title>
+      <single>
+        <search base="search_base_value">
+          <query>| search Categoria=$listaCategoria$ | stats dc(IP) as NumberIP</query>
+        </search>
+        <option name="colorBy">trend</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">all</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">inverse</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+        <drilldown>
+          <link target="_blank">search?q=index%3D%22realprotect%22%20%7C%20fields%20IP%20%7C%20stats%20dc(IP)&amp;earliest=$tempo.earliest$&amp;latest=$tempo.latest$</link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <title>Informações sobre os Fretes dos Produtos</title>
+      <html>
+      <style>
+        #centralize .facets-container{
+        display: flex !important;
+        justify-content: center !important;
+        }
+      </style>
+    </html>
+      <single id="centralize">
+        <search>
+          <query>index="realprotect" Categoria=$listaCategoria$ | stats sum(Frete) as "Soma", avg(Frete) as "Média" min(Frete) as "Menor Valor", max(Frete) as "Maior Valor"</query>
+          <earliest>$tempo.earliest$</earliest>
+          <latest>$tempo.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="height">123</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">1</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel id="StateMap">
+      <title>Mapa com categorias por região</title>
+      <input type="time" token="time" searchWhenChanged="true">
+        <label>Selecione o range de tempo</label>
+        <default>
+          <earliest>0</earliest>
+          <latest></latest>
+        </default>
+      </input>
+      <map>
+        <search>
+          <query>index=realprotect Categoria=$listaCategoria$ | iplocation IP | geostats latfield=lat longfield=lon count by Region</query>
+          <earliest>$tempo.earliest$</earliest>
+          <latest>$tempo.latest$</latest>
+        </search>
+        <option name="drilldown">all</option>
+        <option name="height">359</option>
+        <option name="mapping.type">marker</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <set token="map.click.south">$click.bounds.south$</set>
+          <set token="map.click.east">$click.bounds.east$</set>
+          <set token="map.click.north">$click.bounds.north$</set>
+          <set token="map.click.west">$click.bounds.west$</set>
+        </drilldown>
+      </map>
+    </panel>
+    <panel id="StateTable">
+      <title>Lista de IP's e Informações de Localização Geográfica</title>
+      <html depends="$alwaysHideCSS$">
+        <style>
+              #table, .table th, .table td {
+                   text-align: center!important;
+               }
+        </style>
+    </html>
+      <table id="table">
+        <search>
+          <query>index=realprotect Categoria=$listaCategoria$
+| iplocation IP prefix=client | table IP client*
+| search clientlat &gt;= $map.click.south$
+         clientlat &lt;= $map.click.north$
+         clientlon &gt;= $map.click.west$
+         clientlon &lt;= $map.click.east$</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+</form>

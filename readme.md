@@ -6,7 +6,7 @@
 * A dashboard foi criada estruturando o XML em BaseSearch's;
 
 Link de Acesso:
-* https://54.173.249.240:8000 ou https://ec2-54-173-249-240.compute-1.amazonaws.com:8000
+* https://52.87.173.142:8000 ou https://ec2-52-87-173-142.compute-1.amazonaws.com:8000
 * Usuário e Senha: realprotect
 * Index: realprotect
 * Sourcetype: ecommerce_app
